@@ -16,7 +16,7 @@ export default function Header() {
           <Link href="/dashboard" className="flex items-center space-x-2">
             <Logo className="h-6 w-6 text-primary" />
             <span className="inline-block font-bold font-headline text-lg">
-              LoanLens
+              LoanTrack AI
             </span>
           </Link>
         </div>

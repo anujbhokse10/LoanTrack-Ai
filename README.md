@@ -1,6 +1,6 @@
-# LoanLens - Smart Loan Monitoring Assistant
+# LoanTrack AI - Smart Loan Monitoring Assistant
 
-LoanLens is a smart loan monitoring and repayment assistant designed to help users track active loans, visualize repayment progress, and avoid missed EMIs through intelligent alerts.
+LoanTrack AI is a smart loan monitoring and repayment assistant designed to help users track active loans, visualize repayment progress, and avoid missed EMIs through intelligent alerts.
 
 Built for a hackathon, this MVP is production-ready, focusing on a clean, responsive, and intuitive user experience.
 
@@ -95,4 +95,4 @@ Built for a hackathon, this MVP is production-ready, focusing on a clean, respon
     - Click "Generate" and showcase the AI-generated configuration.
 
 5.  **Conclusion**:
-    - "And that's LoanLens—a smart assistant to help you stay on top of your loans, all in a simple, visual dashboard."
+    - "And that's LoanTrack AI—a smart assistant to help you stay on top of your loans, all in a simple, visual dashboard."

@@ -53,7 +53,7 @@ export default function WelcomePage() {
       <header className="p-4 flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-2">
           <Logo className="h-8 w-8 text-primary" />
-          <h1 className="text-xl font-bold font-headline text-primary">LoanLens</h1>
+          <h1 className="text-xl font-bold font-headline text-primary">LoanTrack AI</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" asChild>
@@ -79,7 +79,7 @@ export default function WelcomePage() {
               Financial clarity for your loans.
             </h1>
             <p className="max-w-xl text-lg md:text-xl text-muted-foreground mb-8">
-              LoanLens is the smart way to monitor your loans. Visualize progress, manage EMIs, and stay on track with intelligent alerts.
+              LoanTrack AI is the smart way to monitor your loans. Visualize progress, manage EMIs, and stay on track with intelligent alerts.
             </p>
             <Button size="lg" asChild className="font-bold">
               <Link href="/signup">
@@ -132,7 +132,7 @@ export default function WelcomePage() {
       </main>
 
       <footer className="p-4 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} LoanLens. All Rights Reserved.
+        © {new Date().getFullYear()} LoanTrack AI. All Rights Reserved.
       </footer>
     </div>
   );
