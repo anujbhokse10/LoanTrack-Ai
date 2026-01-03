@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
-  Wallet,
+  Banknote,
   FileText,
   CreditCard,
   History,
@@ -17,11 +17,11 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/balance', label: 'Balance', icon: Wallet },
+  { href: '/dashboard/balance', label: 'Your Loans', icon: Banknote },
   { href: '/dashboard/invoice', label: 'Invoice', icon: FileText },
   { href: '/dashboard/card', label: 'Card', icon: CreditCard },
   { href: '/dashboard/history', label: 'History', icon: History },
-  { href: '/dashboard/details', label: 'Details', icon: Info },
+  { href: '/dashboard/details', 'label': 'Details', icon: Info },
 ];
 
 export default function Sidebar() {
