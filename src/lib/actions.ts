@@ -2,6 +2,7 @@
 
 import { configureSmartReminder, type SmartReminderInput } from '@/ai/flows/smart-reminder-configuration';
 import { analyzeLoans, type LoanAnalysisInput } from '@/ai/flows/loan-analysis';
+import { chatWithAdvisor, type ChatWithAdvisorInput } from '@/ai/flows/financial-chat';
 
 export async function getSmartReminderConfig(input: SmartReminderInput) {
     try {
@@ -20,5 +21,15 @@ export async function getLoanAnalysis(input: LoanAnalysisInput) {
     } catch(error) {
         console.error('Error in getLoanAnalysis:', error);
         return { success: false, error: 'Failed to generate loan analysis. Please ensure the Genkit server is running.' };
+    }
+}
+
+export async function getFinancialChatResponse(input: ChatWithAdvisorInput) {
+    try {
+        const result = await chatWithAdvisor(input);
+        return { success: true, data: result };
+    } catch(error) {
+        console.error('Error in getFinancialChatResponse:', error);
+        return { success: false, error: 'Failed to get chat response. Please ensure the Genkit server is running.' };
     }
 }

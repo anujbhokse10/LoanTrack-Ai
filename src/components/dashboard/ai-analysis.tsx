@@ -16,6 +16,15 @@ export default function AiAnalysis() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchAnalysis = async () => {
+    if (loans.length === 0) {
+        setIsLoading(false);
+        setAnalysis({
+            overallSummary: "You don't have any active loans being tracked. Add a loan to get started with AI analysis.",
+            keyObservations: [],
+            recommendations: [],
+        });
+        return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -34,6 +43,7 @@ export default function AiAnalysis() {
 
   useEffect(() => {
     fetchAnalysis();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loans]);
 
   const renderLoading = () => (
@@ -87,10 +97,10 @@ export default function AiAnalysis() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-accent" />
-            AI Financial Advisor
+            <Lightbulb className="h-5 w-5 text-yellow-400" />
+            AI Quick Analysis
         </CardTitle>
-        <CardDescription>Your personalized loan portfolio analysis.</CardDescription>
+        <CardDescription>A one-time summary of your loan portfolio.</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? renderLoading() : error ? renderError() : renderContent()}
