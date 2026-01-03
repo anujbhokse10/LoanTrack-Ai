@@ -28,7 +28,6 @@ import {
 import { useLoanContext } from '@/contexts/loan-context';
 import { useState } from 'react';
 import SmartReminderDialog from './smart-reminder-dialog';
-import Image from 'next/image';
 
 type LoanCardProps = {
   loan: Loan;
@@ -61,18 +60,7 @@ export default function LoanCard({ loan }: LoanCardProps) {
 
   return (
     <>
-      <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row overflow-hidden">
-        {loan.imageUrl && (
-           <div className="relative h-48 md:h-auto md:w-1/3">
-             <Image 
-                src={loan.imageUrl} 
-                alt={loan.name} 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 33vw"
-             />
-           </div>
-        )}
+      <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
         <div className="flex flex-col flex-grow">
             <CardHeader>
             <div className="flex justify-between items-start">

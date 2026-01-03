@@ -8,7 +8,6 @@ export interface Loan {
   startDate: string; // ISO string
   tenure: number; // in months
   paidMonths: number;
-  imageUrl?: string;
 }
 
 export type LoanStatus = 'On Track' | 'Due Soon' | 'Overdue';
