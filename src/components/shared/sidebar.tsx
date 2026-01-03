@@ -19,8 +19,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/balance', label: 'Your Loans', icon: Banknote },
   { href: '/dashboard/invoice', label: 'AI Financial Advisor', icon: Lightbulb },
-  { href: '/dashboard/card', label: 'Card', icon: CreditCard },
-  { href: 'a/dashboard/history', label: 'History', icon: History },
+  { href: '/dashboard/history', label: 'History', icon: History },
   { href: '/dashboard/details', 'label': 'Details', icon: Info },
 ];
 
@@ -31,7 +30,7 @@ export default function Sidebar() {
   if (isMobile) {
       return (
         <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background">
-            <div className="grid h-16 grid-cols-6">
+            <div className="grid h-16 grid-cols-5">
                 {navItems.map(({ href, label, icon: Icon }) => (
                     <Link
                         key={href}
