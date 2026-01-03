@@ -25,12 +25,12 @@ const LoanSchema = z.object({
   imageUrl: z.string().optional(),
 });
 
-export const LoanAnalysisInputSchema = z.object({
+const LoanAnalysisInputSchema = z.object({
   loans: z.array(LoanSchema),
 });
 export type LoanAnalysisInput = z.infer<typeof LoanAnalysisInputSchema>;
 
-export const LoanAnalysisOutputSchema = z.object({
+const LoanAnalysisOutputSchema = z.object({
   overallSummary: z.string().describe("A brief, two-sentence summary of the user's overall loan situation."),
   keyObservations: z.array(z.string()).describe('A list of 2-3 most important observations about the loan portfolio (e.g., highest interest rate, total debt).'),
   recommendations: z.array(z.string()).describe('A list of 2-3 actionable recommendations for the user (e.g., which loan to prioritize, potential savings).'),
