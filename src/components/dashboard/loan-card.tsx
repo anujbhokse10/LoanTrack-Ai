@@ -3,12 +3,10 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -28,98 +26,110 @@ import {
 import { useLoanContext } from '@/contexts/loan-context';
 import { useState } from 'react';
 import SmartReminderDialog from './smart-reminder-dialog';
+import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
 
 type LoanCardProps = {
   loan: Loan;
 };
 
-const statusColors: Record<LoanStatus, string> = {
-  'On Track': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-800',
-  'Due Soon': 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800',
-  'Overdue': 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800',
+const statusConfig: Record<LoanStatus, { className: string; color: string }> = {
+  'On Track': { 
+    className: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-800',
+    color: 'hsl(var(--chart-1))'
+  },
+  'Due Soon': {
+    className: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800',
+    color: 'hsl(var(--chart-2))'
+  },
+  'Overdue': {
+    className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800',
+    color: 'hsl(var(--chart-3))'
+  },
 };
+
 
 export default function LoanCard({ loan }: LoanCardProps) {
   const { setEditingLoan, deleteLoan, isDemoMode } = useLoanContext();
   const [isReminderDialogOpen, setReminderDialogOpen] = useState(false);
 
-  const { status, days } = getLoanStatus(loan);
+  const { status } = getLoanStatus(loan);
   const remainingBalance = calculateRemainingBalance(loan);
   const completionPercentage = calculateCompletionPercentage(loan);
-
-  const getStatusText = () => {
-    switch (status) {
-      case 'Overdue':
-        return `Overdue by ${days} day${days > 1 ? 's' : ''}`;
-      case 'Due Soon':
-        return `Due in ${days} day${days > 1 ? 's' : ''}`;
-      default:
-        return 'On Track';
-    }
-  };
+  const config = statusConfig[status];
+  
+  const chartData = [{ name: 'progress', value: completionPercentage }];
 
   return (
     <>
       <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
-        <div className="flex flex-col flex-grow">
-            <CardHeader>
-            <div className="flex justify-between items-start">
-                <div>
-                <CardTitle className="text-xl">{loan.name}</CardTitle>
-                <CardDescription>
-                    EMI: {formatCurrency(loan.emi)}/month
-                </CardDescription>
+        <div className="grid grid-cols-3 gap-4 p-6 items-center">
+            <div className="col-span-2">
+                <div className="flex justify-between items-start mb-4">
+                    <CardTitle className="text-xl font-bold font-headline">{loan.name}</CardTitle>
+                     <div className="flex items-center gap-2">
+                        <Badge className={config.className}>{status}</Badge>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDemoMode}>
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Loan options</span>
+                            </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => setEditingLoan(loan)}>
+                                <Pencil className="mr-2 h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => deleteLoan(loan.id)} className="text-red-500">
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                <Badge className={statusColors[status]}>{status}</Badge>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDemoMode}>
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Loan options</span>
-                    </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                    <DropdownMenuItem onSelect={() => setEditingLoan(loan)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => deleteLoan(loan.id)} className="text-red-500">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                </div>
-            </div>
-            </CardHeader>
-            <CardContent className="space-y-4 flex-grow">
-            <div>
-                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Progress</span>
-                <span>
-                    {loan.paidMonths} / {loan.tenure} months
-                </span>
-                </div>
-                <Progress value={completionPercentage} aria-label={`${completionPercentage.toFixed(0)}% paid`} />
-            </div>
-            <div className="flex justify-between items-center text-sm">
-                <div className="text-muted-foreground">
-                Remaining:{' '}
-                <span className="font-bold text-foreground">
-                    {formatCurrency(remainingBalance)}
-                </span>
-                </div>
-                <div className="text-muted-foreground">
-                {getStatusText()}
+                <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                        <span className="text-muted-foreground">Monthly EMI</span>
+                        <span className="font-medium text-foreground">{formatCurrency(loan.emi)}</span>
+                    </div>
+                     <div className="flex justify-between">
+                        <span className="text-muted-foreground">Months Paid</span>
+                        <span className="font-medium text-foreground">{loan.paidMonths} / {loan.tenure}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold">
+                        <span className="text-muted-foreground">Balance Left</span>
+                        <span className="text-foreground">{formatCurrency(remainingBalance)}</span>
+                    </div>
                 </div>
             </div>
-            </CardContent>
-            <CardFooter className="flex justify-start">
-                <Button variant="outline" size="sm" onClick={() => setReminderDialogOpen(true)}>
-                    <Bell className="mr-2 h-4 w-4" />
-                    Smart Alerts
-                </Button>
-            </CardFooter>
+            <div className="relative h-28 w-28">
+                <ResponsiveContainer width="100%" height="100%">
+                    <RadialBarChart 
+                        innerRadius="70%" 
+                        outerRadius="100%" 
+                        data={chartData} 
+                        startAngle={90} 
+                        endAngle={-270}
+                    >
+                        <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                        <RadialBar 
+                            background 
+                            dataKey="value" 
+                            cornerRadius={10} 
+                            fill={config.color}
+                        />
+                    </RadialBarChart>
+                </ResponsiveContainer>
+                 <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold text-foreground">{completionPercentage.toFixed(0)}%</span>
+                </div>
+            </div>
         </div>
+        <CardFooter className="bg-secondary/50 p-3 flex justify-end mt-auto">
+            <Button variant="ghost" size="sm" onClick={() => setReminderDialogOpen(true)}>
+                <Bell className="mr-2 h-4 w-4 text-primary" />
+                Smart Alerts
+            </Button>
+        </CardFooter>
       </Card>
       <SmartReminderDialog
         loan={loan}
