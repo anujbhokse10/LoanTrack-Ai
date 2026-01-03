@@ -1,4 +1,4 @@
-import { Loan } from './types';
+import { Loan, PaymentRecord } from './types';
 
 export const demoLoans: Loan[] = [
   {
@@ -45,4 +45,36 @@ export const demoLoans: Loan[] = [
     tenure: 120, // 10 years
     paidMonths: 1, // Due soon
   },
+];
+
+
+export const demoPaymentHistory: PaymentRecord[] = [
+    {
+        id: 'p1',
+        loanId: '1',
+        loanName: 'Home Loan',
+        amount: 43391,
+        paymentDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString()
+    },
+    {
+        id: 'p2',
+        loanId: '2',
+        loanName: 'Car Loan',
+        amount: 16999,
+        paymentDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString()
+    },
+     {
+        id: 'p3',
+        loanId: '3',
+        loanName: 'Personal Loan',
+        amount: 9964,
+        paymentDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString()
+    },
+     {
+        id: 'p4',
+        loanId: '1',
+        loanName: 'Home Loan',
+        amount: 43391,
+        paymentDate: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString()
+    },
 ];

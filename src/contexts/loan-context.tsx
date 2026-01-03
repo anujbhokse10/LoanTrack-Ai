@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useState, useContext, ReactNode, useMemo } from 'react';
-import type { Loan } from '@/lib/types';
-import { demoLoans } from '@/lib/demo-data';
+import type { Loan, PaymentRecord } from '@/lib/types';
+import { demoLoans, demoPaymentHistory } from '@/lib/demo-data';
 
 interface LoanContextType {
   loans: Loan[];
@@ -16,6 +16,7 @@ interface LoanContextType {
   addLoan: (loan: Omit<Loan, 'id' | 'userId'>) => void;
   updateLoan: (loan: Loan) => void;
   deleteLoan: (loanId: string) => void;
+  paymentHistory: PaymentRecord[];
   makePayment: (loanId: string) => void;
 }
 
@@ -23,6 +24,8 @@ const LoanContext = createContext<LoanContextType | undefined>(undefined);
 
 export const LoanProvider = ({ children }: { children: ReactNode }) => {
   const [userLoans, setUserLoans] = useState<Loan[]>([]);
+  const [userPaymentHistory, setUserPaymentHistory] = useState<PaymentRecord[]>([]);
+
   const [isDemoMode, setIsDemoMode] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
@@ -31,10 +34,11 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
     setIsDemoMode(prev => !prev);
   };
   
-  // Use a state for demo loans so we can update images
   const [currentDemoLoans, setCurrentDemoLoans] = useState<Loan[]>(demoLoans);
+  const [currentDemoPaymentHistory, setCurrentDemoPaymentHistory] = useState<PaymentRecord[]>(demoPaymentHistory);
 
   const loans = useMemo(() => isDemoMode ? currentDemoLoans : userLoans, [isDemoMode, userLoans, currentDemoLoans]);
+  const paymentHistory = useMemo(() => isDemoMode ? currentDemoPaymentHistory : userPaymentHistory, [isDemoMode, userPaymentHistory, currentDemoPaymentHistory]);
   
   const updateLoan = (updatedLoan: Loan) => {
     const updater = (prev: Loan[]) => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l);
@@ -46,18 +50,15 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addLoan = (loanData: Omit<Loan, 'id' | 'userId'>) => {
-    // In a real app, this would be an API call.
-    // For now, we just update local state.
     const newLoan: Loan = {
       ...loanData,
       id: new Date().getTime().toString(),
-      userId: 'current-user', // Replace with actual user ID
+      userId: 'current-user',
     };
     if (!isDemoMode) {
       setUserLoans(prev => [...prev, newLoan]);
     }
   };
-
 
   const deleteLoan = (loanId: string) => {
      if (!isDemoMode) {
@@ -66,20 +67,35 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const makePayment = (loanId: string) => {
-    const updater = (prev: Loan[]) => prev.map(l => {
+    let paidLoan: Loan | undefined;
+    const loanUpdater = (prev: Loan[]) => prev.map(l => {
         if (l.id === loanId && l.paidMonths < l.tenure) {
+            paidLoan = l;
             return { ...l, paidMonths: l.paidMonths + 1 };
         }
         return l;
     });
 
+    const historyUpdater = (prev: PaymentRecord[]) => {
+      if (!paidLoan) return prev;
+      const newPayment: PaymentRecord = {
+        id: new Date().getTime().toString(),
+        loanId: paidLoan.id,
+        loanName: paidLoan.name,
+        amount: paidLoan.emi,
+        paymentDate: new Date().toISOString(),
+      };
+      return [newPayment, ...prev];
+    };
+
     if (isDemoMode) {
-        setCurrentDemoLoans(updater);
+        setCurrentDemoLoans(loanUpdater);
+        setCurrentDemoPaymentHistory(historyUpdater);
     } else {
-        setUserLoans(updater);
+        setUserLoans(loanUpdater);
+        setUserPaymentHistory(historyUpdater);
     }
   };
-
 
   const value = {
     loans,
@@ -99,6 +115,7 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
     addLoan,
     updateLoan,
     deleteLoan,
+    paymentHistory,
     makePayment,
   };
 

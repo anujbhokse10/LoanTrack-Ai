@@ -11,3 +11,11 @@ export interface Loan {
 }
 
 export type LoanStatus = 'On Track' | 'Due Soon' | 'Overdue';
+
+export interface PaymentRecord {
+  id: string;
+  loanId: string;
+  loanName: string;
+  amount: number;
+  paymentDate: string; // ISO string
+}
