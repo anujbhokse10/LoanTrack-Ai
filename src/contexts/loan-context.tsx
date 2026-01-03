@@ -29,9 +29,19 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
   const toggleDemoMode = () => {
     setIsDemoMode(prev => !prev);
   };
+  
+  // Use a state for demo loans so we can update images
+  const [currentDemoLoans, setCurrentDemoLoans] = useState<Loan[]>(demoLoans);
 
-  const loans = useMemo(() => isDemoMode ? demoLoans : userLoans, [isDemoMode, userLoans]);
-  const setLoans = useMemo(() => isDemoMode ? () => {} : setUserLoans, [isDemoMode]);
+  const loans = useMemo(() => isDemoMode ? currentDemoLoans : userLoans, [isDemoMode, userLoans, currentDemoLoans]);
+  
+  const updateLoan = (updatedLoan: Loan) => {
+    if (isDemoMode) {
+        setCurrentDemoLoans(prev => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l));
+    } else {
+        setUserLoans(prev => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l));
+    }
+  };
 
   const addLoan = (loanData: Omit<Loan, 'id' | 'userId'>) => {
     // In a real app, this would be an API call.
@@ -46,11 +56,6 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateLoan = (updatedLoan: Loan) => {
-    if (!isDemoMode) {
-      setUserLoans(prev => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l));
-    }
-  };
 
   const deleteLoan = (loanId: string) => {
      if (!isDemoMode) {
@@ -61,7 +66,7 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
 
   const value = {
     loans,
-    setLoans,
+    setLoans: isDemoMode ? setCurrentDemoLoans : setUserLoans,
     isDemoMode,
     toggleDemoMode,
     isSheetOpen,

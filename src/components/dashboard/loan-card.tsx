@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Bell, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { Bell, MoreHorizontal, Pencil, Trash2, Image as ImageIcon, Loader2 } from 'lucide-react';
 import type { Loan, LoanStatus } from '@/lib/types';
 import {
   formatCurrency,
@@ -28,6 +28,9 @@ import {
 import { useLoanContext } from '@/contexts/loan-context';
 import { useState } from 'react';
 import SmartReminderDialog from './smart-reminder-dialog';
+import Image from 'next/image';
+import { generateLoanImage } from '@/lib/actions';
+import { useToast } from '@/hooks/use-toast';
 
 type LoanCardProps = {
   loan: Loan;
@@ -40,8 +43,10 @@ const statusColors: Record<LoanStatus, string> = {
 };
 
 export default function LoanCard({ loan }: LoanCardProps) {
-  const { setEditingLoan, deleteLoan, isDemoMode } = useLoanContext();
+  const { setEditingLoan, deleteLoan, isDemoMode, updateLoan } = useLoanContext();
   const [isReminderDialogOpen, setReminderDialogOpen] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const { toast } = useToast();
 
   const { status, days } = getLoanStatus(loan);
   const remainingBalance = calculateRemainingBalance(loan);
@@ -58,9 +63,38 @@ export default function LoanCard({ loan }: LoanCardProps) {
     }
   };
 
+  const handleGenerateImage = async () => {
+    setIsGeneratingImage(true);
+    const response = await generateLoanImage(loan.name);
+    if (response.success && response.data) {
+        updateLoan({ ...loan, imageUrl: response.data });
+         toast({
+            title: 'Image Generated',
+            description: `A new image for "${loan.name}" has been created.`,
+        });
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Image Generation Failed',
+            description: response.error,
+        });
+    }
+    setIsGeneratingImage(false);
+  };
+
   return (
     <>
-      <Card className="hover:shadow-lg transition-shadow duration-300">
+      <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+        {loan.imageUrl && (
+            <div className="relative w-full h-40">
+                <Image 
+                    src={loan.imageUrl} 
+                    alt={`Image for ${loan.name}`} 
+                    fill
+                    className="object-cover rounded-t-lg"
+                />
+            </div>
+        )}
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
@@ -90,7 +124,7 @@ export default function LoanCard({ loan }: LoanCardProps) {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 flex-grow">
           <div>
             <div className="flex justify-between text-sm text-muted-foreground mb-1">
               <span>Progress</span>
@@ -112,10 +146,18 @@ export default function LoanCard({ loan }: LoanCardProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-between">
             <Button variant="outline" size="sm" onClick={() => setReminderDialogOpen(true)}>
                 <Bell className="mr-2 h-4 w-4" />
                 Smart Alerts
+            </Button>
+            <Button variant="secondary" size="sm" onClick={handleGenerateImage} disabled={isGeneratingImage}>
+                {isGeneratingImage ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <ImageIcon className="mr-2 h-4 w-4" />
+                )}
+                {loan.imageUrl ? 'Regenerate Image' : 'Generate Image'}
             </Button>
         </CardFooter>
       </Card>
