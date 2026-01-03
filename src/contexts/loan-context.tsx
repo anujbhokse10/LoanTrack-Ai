@@ -26,7 +26,7 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
   const [userLoans, setUserLoans] = useState<Loan[]>([]);
   const [userPaymentHistory, setUserPaymentHistory] = useState<PaymentRecord[]>([]);
 
-  const [isDemoMode, setIsDemoMode] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(true); // Always start in demo mode
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
 
