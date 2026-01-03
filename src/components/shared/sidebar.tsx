@@ -20,7 +20,7 @@ const navItems = [
   { href: '/dashboard/balance', label: 'Your Loans', icon: Banknote },
   { href: '/dashboard/invoice', label: 'AI Financial Advisor', icon: Lightbulb },
   { href: '/dashboard/history', label: 'History', icon: History },
-  { href: '/dashboard/details', 'label': 'Details', icon: Info },
+  { href: '/dashboard/details', label: 'About', icon: Info },
 ];
 
 export default function Sidebar() {
