@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/shared/logo';
 import { UserNav } from '@/components/auth/user-nav';
 import { DemoModeToggle } from '../dashboard/demo-mode-toggle';
+import { ThemeToggle } from './theme-toggle';
 
 export default function Header() {
 
@@ -18,6 +19,7 @@ export default function Header() {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <DemoModeToggle />
+          <ThemeToggle />
           <UserNav />
         </div>
       </div>
