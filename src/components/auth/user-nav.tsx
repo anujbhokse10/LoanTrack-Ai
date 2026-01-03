@@ -11,10 +11,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { SettingsDialog } from './settings-dialog';
 
 export function UserNav() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   if (!user) {
     return null;
@@ -26,6 +29,7 @@ export function UserNav() {
   }
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -46,7 +50,14 @@ export function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => setIsSettingsOpen(true)}>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    <SettingsDialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen} user={user} setUser={setUser} />
+    </>
   );
 }
