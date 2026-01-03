@@ -7,7 +7,7 @@ import Charts from './charts';
 import LoanList from './loan-list';
 import StatsCards from './stats-cards';
 
-export default function DashboardClient() {
+export default function DashboardClient({ showAiAnalysis = true }: { showAiAnalysis?: boolean }) {
 
   return (
     <div className="flex flex-col gap-8">
@@ -20,7 +20,7 @@ export default function DashboardClient() {
           <LoanList />
         </div >
         <MotionDiv className="lg:col-span-1 flex flex-col gap-8" delay={0.2}>
-          <AiAnalysis />
+          {showAiAnalysis && <AiAnalysis />}
           <Charts />
         </MotionDiv>
       </div>

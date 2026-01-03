@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   Banknote,
-  FileText,
+  Lightbulb,
   CreditCard,
   History,
   Info,
@@ -18,9 +18,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/balance', label: 'Your Loans', icon: Banknote },
-  { href: '/dashboard/invoice', label: 'Invoice', icon: FileText },
+  { href: '/dashboard/invoice', label: 'AI Financial Advisor', icon: Lightbulb },
   { href: '/dashboard/card', label: 'Card', icon: CreditCard },
-  { href: '/dashboard/history', label: 'History', icon: History },
+  { href: 'a/dashboard/history', label: 'History', icon: History },
   { href: '/dashboard/details', 'label': 'Details', icon: Info },
 ];
 
