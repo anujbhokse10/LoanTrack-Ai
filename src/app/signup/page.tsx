@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/auth/auth-form";
+import { AuthFormClient } from "@/components/auth/auth-form-client";
 import { Logo } from "@/components/shared/logo";
 import Link from "next/link";
 
@@ -11,7 +11,7 @@ export default function SignupPage() {
             <h1 className="text-3xl font-bold font-headline text-primary">Create Your Account</h1>
             <p className="text-muted-foreground">Start tracking your loans in seconds.</p>
         </div>
-        <AuthForm mode="signup" />
+        <AuthFormClient mode="signup" />
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Already have an account?{' '}
           <Link href="/login" className="font-medium text-primary hover:underline">
