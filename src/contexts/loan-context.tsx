@@ -16,6 +16,7 @@ interface LoanContextType {
   addLoan: (loan: Omit<Loan, 'id' | 'userId'>) => void;
   updateLoan: (loan: Loan) => void;
   deleteLoan: (loanId: string) => void;
+  makePayment: (loanId: string) => void;
 }
 
 const LoanContext = createContext<LoanContextType | undefined>(undefined);
@@ -36,10 +37,11 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
   const loans = useMemo(() => isDemoMode ? currentDemoLoans : userLoans, [isDemoMode, userLoans, currentDemoLoans]);
   
   const updateLoan = (updatedLoan: Loan) => {
+    const updater = (prev: Loan[]) => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l);
     if (isDemoMode) {
-        setCurrentDemoLoans(prev => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l));
+        setCurrentDemoLoans(updater);
     } else {
-        setUserLoans(prev => prev.map(l => l.id === updatedLoan.id ? updatedLoan : l));
+        setUserLoans(updater);
     }
   };
 
@@ -63,6 +65,21 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const makePayment = (loanId: string) => {
+    const updater = (prev: Loan[]) => prev.map(l => {
+        if (l.id === loanId && l.paidMonths < l.tenure) {
+            return { ...l, paidMonths: l.paidMonths + 1 };
+        }
+        return l;
+    });
+
+    if (isDemoMode) {
+        setCurrentDemoLoans(updater);
+    } else {
+        setUserLoans(updater);
+    }
+  };
+
 
   const value = {
     loans,
@@ -82,6 +99,7 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
     addLoan,
     updateLoan,
     deleteLoan,
+    makePayment,
   };
 
   return (

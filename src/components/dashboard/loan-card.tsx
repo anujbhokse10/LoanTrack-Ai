@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Bell, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { Bell, MoreHorizontal, Pencil, Trash2, IndianRupee } from 'lucide-react';
 import type { Loan, LoanStatus } from '@/lib/types';
 import {
   formatCurrency,
@@ -49,7 +49,7 @@ const statusConfig: Record<LoanStatus, { className: string; color: string }> = {
 
 
 export default function LoanCard({ loan }: LoanCardProps) {
-  const { setEditingLoan, deleteLoan, isDemoMode } = useLoanContext();
+  const { setEditingLoan, deleteLoan, isDemoMode, makePayment } = useLoanContext();
   const [isReminderDialogOpen, setReminderDialogOpen] = useState(false);
 
   const { status } = getLoanStatus(loan);
@@ -58,6 +58,8 @@ export default function LoanCard({ loan }: LoanCardProps) {
   const config = statusConfig[status];
   
   const chartData = [{ name: 'progress', value: completionPercentage }];
+  
+  const isPaidOff = loan.paidMonths >= loan.tenure;
 
   return (
     <>
@@ -67,7 +69,7 @@ export default function LoanCard({ loan }: LoanCardProps) {
                 <div className="flex justify-between items-start mb-4">
                     <CardTitle className="text-xl font-bold font-headline">{loan.name}</CardTitle>
                      <div className="flex items-center gap-2">
-                        <Badge className={config.className}>{status}</Badge>
+                        <Badge className={config.className}>{isPaidOff ? 'Completed' : status}</Badge>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDemoMode}>
@@ -115,7 +117,7 @@ export default function LoanCard({ loan }: LoanCardProps) {
                             background 
                             dataKey="value" 
                             cornerRadius={10} 
-                            fill={config.color}
+                            fill={isPaidOff ? 'hsl(var(--border))' : config.color}
                         />
                     </RadialBarChart>
                 </ResponsiveContainer>
@@ -124,10 +126,14 @@ export default function LoanCard({ loan }: LoanCardProps) {
                 </div>
             </div>
         </div>
-        <CardFooter className="bg-secondary/50 p-3 flex justify-end mt-auto">
-            <Button variant="ghost" size="sm" onClick={() => setReminderDialogOpen(true)}>
+        <CardFooter className="bg-secondary/50 p-3 flex justify-between items-center mt-auto">
+             <Button variant="ghost" size="sm" onClick={() => setReminderDialogOpen(true)} disabled={isPaidOff}>
                 <Bell className="mr-2 h-4 w-4 text-primary" />
                 Smart Alerts
+            </Button>
+            <Button size="sm" onClick={() => makePayment(loan.id)} disabled={isPaidOff}>
+                <IndianRupee className="mr-2 h-4 w-4" />
+                Pay EMI
             </Button>
         </CardFooter>
       </Card>
