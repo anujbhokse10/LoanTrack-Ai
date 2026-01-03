@@ -1,13 +1,9 @@
 import Link from 'next/link';
 import { Logo } from '@/components/shared/logo';
 import { UserNav } from '@/components/auth/user-nav';
-import { Button } from '../ui/button';
-import { PlusCircle } from 'lucide-react';
-import { useLoanContext } from '@/contexts/loan-context';
 import { DemoModeToggle } from '../dashboard/demo-mode-toggle';
 
 export default function Header() {
-  const { setSheetOpen } = useLoanContext();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -22,10 +18,6 @@ export default function Header() {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <DemoModeToggle />
-          <Button onClick={() => setSheetOpen(true)}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Loan
-          </Button>
           <UserNav />
         </div>
       </div>

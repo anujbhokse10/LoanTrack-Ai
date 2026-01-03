@@ -16,10 +16,10 @@ export default function DashboardClient() {
       </MotionDiv>
 
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col gap-8">
           <LoanList />
         </div >
-        <MotionDiv className="lg:col-span-1 flex flex-col gap-8 sticky top-20" delay={0.4}>
+        <MotionDiv className="lg:col-span-1 flex flex-col gap-8" delay={0.2}>
           <AiAnalysis />
           <Charts />
         </MotionDiv>

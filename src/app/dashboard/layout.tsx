@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Header from '@/components/shared/header';
 import { LoanProvider } from '@/contexts/loan-context';
+import Sidebar from '@/components/shared/sidebar';
 
 export default function DashboardLayout({
   children,
@@ -32,7 +33,10 @@ export default function DashboardLayout({
     <LoanProvider>
       <div className="min-h-screen w-full flex flex-col">
         <Header />
-        <main className="flex-grow p-4 md:p-8">{children}</main>
+        <div className="flex flex-1">
+          <Sidebar />
+          <main className="flex-grow p-4 md:p-8 bg-secondary/20">{children}</main>
+        </div>
       </div>
     </LoanProvider>
   );
