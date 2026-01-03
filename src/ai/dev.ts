@@ -3,4 +3,4 @@ config();
 
 import '@/ai/flows/smart-reminder-configuration.ts';
 import '@/ai/flows/smart-reminder-scheduling.ts';
-import '@/ai/flows/generate-image.ts';
+import '@/ai/flows/loan-analysis';
