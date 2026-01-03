@@ -1,9 +1,6 @@
 'use client';
 
-import { signOut } from 'firebase/auth';
-import { getFirebase } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +15,6 @@ import { LogOut } from 'lucide-react';
 
 export function UserNav() {
   const { user } = useAuth();
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    const { auth } = getFirebase();
-    if (auth) {
-      await signOut(auth);
-    }
-    router.push('/login');
-  };
 
   if (!user) {
     return null;
@@ -58,11 +46,6 @@ export function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleSignOut}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
