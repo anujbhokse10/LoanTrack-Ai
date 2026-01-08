@@ -28,21 +28,21 @@ export default function LoanList() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold font-headline tracking-tight">Your Loans</h2>
+    <Card>
+       <CardHeader className="flex flex-row justify-between items-center">
+        <CardTitle className="text-2xl font-bold font-headline tracking-tight">Your Loans</CardTitle>
          <Button onClick={() => setSheetOpen(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Loan
           </Button>
-      </div>
-      <div className="flex flex-col gap-4">
+      </CardHeader>
+      <CardContent className="grid gap-4 md:grid-cols-2">
         {loans.map((loan, index) => (
            <MotionDiv key={loan.id} delay={index * 0.1}>
              <LoanCard loan={loan} />
            </MotionDiv>
         ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

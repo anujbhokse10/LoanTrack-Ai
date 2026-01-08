@@ -12,8 +12,6 @@ import {
   XAxis,
   YAxis,
   Cell,
-  RadialBarChart,
-  RadialBar,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLoanContext } from '@/contexts/loan-context';
@@ -66,7 +64,7 @@ export default function Charts() {
   const { loans } = useLoanContext();
 
   const pieChartData = useMemo(() => {
-    return loans.map(loan => ({
+    return loans.filter(loan => calculateRemainingBalance(loan) > 0).map(loan => ({
       name: loan.name,
       value: calculateRemainingBalance(loan),
     }));
@@ -80,19 +78,22 @@ export default function Charts() {
 
     loans.forEach(loan => {
       const startDate = new Date(loan.startDate);
-      for(let i = 0; i < loan.tenure; i++) {
-        const paymentDate = addMonths(startDate, i);
-        if(paymentDate > now) {
-            const monthKey = format(paymentDate, 'MMM yyyy');
-            if(!monthlyPayments[monthKey]) {
-                monthlyPayments[monthKey] = 0;
-            }
-            monthlyPayments[monthKey] += loan.emi;
+      // Only include active loans in future payment calculations
+      if (loan.paidMonths < loan.tenure) {
+        for(let i = loan.paidMonths; i < loan.tenure; i++) {
+          const paymentDate = addMonths(startDate, i + 1);
+           if(paymentDate > now) {
+              const monthKey = format(paymentDate, 'MMM yyyy');
+              if(!monthlyPayments[monthKey]) {
+                  monthlyPayments[monthKey] = 0;
+              }
+              monthlyPayments[monthKey] += loan.emi;
+          }
         }
       }
     });
 
-    const next12Months = Array.from({length: 12}).map((_, i) => addMonths(now, i));
+    const next12Months = Array.from({length: 12}).map((_, i) => addMonths(new Date(), i));
     
     return next12Months.map(date => {
         const monthKey = format(date, 'MMM yyyy');
@@ -134,26 +135,32 @@ export default function Charts() {
           <CardTitle>Loan Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                nameKey="name"
-              >
-                {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend iconSize={10} />
-            </PieChart>
-          </ResponsiveContainer>
+          {pieChartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  nameKey="name"
+                >
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend iconSize={10} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+             <div className="flex items-center justify-center h-[200px]">
+                <p className="text-muted-foreground">All loans are paid off!</p>
+             </div>
+          )}
         </CardContent>
       </Card>
 

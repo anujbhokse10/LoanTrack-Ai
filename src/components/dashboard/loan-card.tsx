@@ -26,7 +26,8 @@ import {
 import { useLoanContext } from '@/contexts/loan-context';
 import { useState } from 'react';
 import SmartReminderDialog from './smart-reminder-dialog';
-import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
+import { Progress } from '@/components/ui/progress';
+
 
 type LoanCardProps = {
   loan: Loan;
@@ -57,75 +58,58 @@ export default function LoanCard({ loan }: LoanCardProps) {
   const completionPercentage = calculateCompletionPercentage(loan);
   const config = statusConfig[status];
   
-  const chartData = [{ name: 'progress', value: completionPercentage }];
-  
   const isPaidOff = loan.paidMonths >= loan.tenure;
 
   return (
     <>
       <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
-        <div className="grid grid-cols-3 gap-4 p-6 items-center">
-            <div className="col-span-2">
-                <div className="flex justify-between items-start mb-4">
-                    <CardTitle className="text-xl font-bold font-headline">{loan.name}</CardTitle>
-                     <div className="flex items-center gap-2">
-                        <Badge className={config.className}>{isPaidOff ? 'Completed' : status}</Badge>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDemoMode}>
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Loan options</span>
-                            </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                            <DropdownMenuItem onSelect={() => setEditingLoan(loan)}>
-                                <Pencil className="mr-2 h-4 w-4" /> Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onSelect={() => deleteLoan(loan.id)} className="text-red-500">
-                                <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </div>
-                <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                        <span className="text-muted-foreground">Monthly EMI</span>
-                        <span className="font-medium text-foreground">{formatCurrency(loan.emi)}</span>
-                    </div>
-                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Months Paid</span>
-                        <span className="font-medium text-foreground">{loan.paidMonths} / {loan.tenure}</span>
-                    </div>
-                    <div className="flex justify-between font-semibold">
-                        <span className="text-muted-foreground">Balance Left</span>
-                        <span className="text-foreground">{formatCurrency(remainingBalance)}</span>
-                    </div>
+        <CardHeader>
+            <div className="flex justify-between items-start">
+                <CardTitle className="text-xl font-bold font-headline">{loan.name}</CardTitle>
+                 <div className="flex items-center gap-2">
+                    <Badge className={config.className}>{isPaidOff ? 'Completed' : status}</Badge>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDemoMode}>
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Loan options</span>
+                        </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => setEditingLoan(loan)}>
+                            <Pencil className="mr-2 h-4 w-4" /> Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => deleteLoan(loan.id)} className="text-red-500">
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
-            <div className="relative h-28 w-28">
-                <ResponsiveContainer width="100%" height="100%">
-                    <RadialBarChart 
-                        innerRadius="70%" 
-                        outerRadius="100%" 
-                        data={chartData} 
-                        startAngle={90} 
-                        endAngle={-270}
-                    >
-                        <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                        <RadialBar 
-                            background 
-                            dataKey="value" 
-                            cornerRadius={10} 
-                            fill={isPaidOff ? 'hsl(var(--border))' : config.color}
-                        />
-                    </RadialBarChart>
-                </ResponsiveContainer>
-                 <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-lg font-bold text-foreground">{completionPercentage.toFixed(0)}%</span>
+        </CardHeader>
+        <CardContent className="flex-grow space-y-4">
+            <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Monthly EMI</span>
+                    <span className="font-medium text-foreground">{formatCurrency(loan.emi)}</span>
+                </div>
+                 <div className="flex justify-between">
+                    <span className="text-muted-foreground">Months Paid</span>
+                    <span className="font-medium text-foreground">{loan.paidMonths} / {loan.tenure}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                    <span className="text-muted-foreground">Balance Left</span>
+                    <span className="text-foreground">{formatCurrency(remainingBalance)}</span>
                 </div>
             </div>
-        </div>
+            <div className="space-y-2">
+                <Progress value={completionPercentage} className="h-2" />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{isPaidOff ? 'Paid Off!' : 'Repayment Progress'}</span>
+                    <span>{completionPercentage.toFixed(0)}%</span>
+                </div>
+            </div>
+        </CardContent>
         <CardFooter className="bg-secondary/50 p-3 flex justify-between items-center mt-auto">
              <Button variant="ghost" size="sm" onClick={() => setReminderDialogOpen(true)} disabled={isPaidOff}>
                 <Bell className="mr-2 h-4 w-4 text-primary" />
