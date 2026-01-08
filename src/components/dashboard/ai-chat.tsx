@@ -34,7 +34,7 @@ export default function AiChat() {
         setMessages([
           {
             role: 'model',
-            content: 'Sorry, I am having trouble connecting. Please try again later.',
+            content: 'Connection error. Please try again.',
           },
         ]);
       }
@@ -42,7 +42,7 @@ export default function AiChat() {
       setMessages([
         {
           role: 'model',
-          content: 'Sorry, I am having trouble connecting. Please try again later.',
+          content: 'Connection error. Please try again.',
         },
       ]);
     } finally {
